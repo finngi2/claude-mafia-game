@@ -98,15 +98,15 @@ ROLES: 2 Mafia | 1 Doctor | 1 Detective | 2 Villagers
 
 Create a team using `TeamCreate` with name `mafia-game-{random-4-digits}`.
 
-**IMPORTANT:** Agents will inherit the current working directory and repository context from where this command is run. They will have full access to the repository without requiring user confirmation due to `bypassPermissions` mode.
+**IMPORTANT:** Agents will inherit the current working directory and folder trust from the coordinator agent's session. By spawning agents WITHOUT `run_in_background` (in foreground mode), they will inherit the parent session's folder permissions and not trigger trust prompts.
 
-Then spawn ALL players as background agents using the `Task` tool with these parameters:
+Then spawn ALL players as foreground agents using the `Task` tool with these parameters:
 - `subagent_type`: "general-purpose"
 - `model`: the assigned model for that player
 - `team_name`: the team name
 - `name`: the player's name (lowercase, e.g., "marlowe")
-- `run_in_background`: true
-- `mode`: "bypassPermissions" (grants agents access to current repository and all tools without confirmation)
+
+**DO NOT include `run_in_background` or `mode` parameters** - foreground agents automatically inherit folder trust from the coordinator session.
 
 Each agent's prompt MUST contain:
 
