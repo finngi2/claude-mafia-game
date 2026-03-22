@@ -40,3 +40,48 @@ playwright-cli close
 | Browser | `--browser=chrome\|firefox\|webkit`, `--persistent` |
 
 Run `playwright-cli --help <command>` for full options.
+
+## Stealth & anti-bot
+
+**robots.txt is not enforced** — playwright-cli ignores it by default. No action needed.
+
+**Prefer real Chrome over Chromium** — Chromium exposes `navigator.webdriver=true`; real Chrome does not:
+```bash
+playwright-cli open --browser=chrome https://target.com
+```
+
+**Use a persistent profile** — in-memory sessions look synthetic; a persistent profile accumulates cookies, history, and fingerprint signals that match a real user:
+```bash
+playwright-cli open --browser=chrome --persistent https://target.com
+```
+
+**Connect to an existing browser** — bypasses headless detection entirely by attaching to a real running browser:
+```bash
+playwright-cli open --extension
+```
+
+**Inject stealth overrides** — patch `navigator.webdriver` and other headless signals before the page loads:
+```bash
+playwright-cli run-code "async page => {
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
+  });
+}"
+```
+
+**Mock bot-detection endpoints** — intercept and spoof fingerprint/analytics calls:
+```bash
+playwright-cli route "**/fingerprint*" --status=200 --body='{}'
+playwright-cli route "**/bot-detection*" --status=200
+```
+
+**Act human** — bot walls score interaction cadence; add pauses between actions, move the mouse before clicking:
+```bash
+playwright-cli mousemove 200 300
+playwright-cli mousedown
+playwright-cli mouseup
+# then click the actual target
+playwright-cli click e5
+```
+
+**Handle CAPTCHAs and redirects** — take a screenshot when a page gate is hit, identify what type it is, then decide: solve via `eval`, load a saved auth state, or switch to `--extension` mode with a real browser session that already passed it.
