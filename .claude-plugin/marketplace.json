@@ -15,6 +15,20 @@
       "source": "./",
       "category": "games",
       "keywords": ["game", "ai", "agents", "mafia", "teams"]
+    },
+    {
+      "name": "playwright-cli",
+      "description": "Browser automation skill using playwright-cli for agent-driven web navigation, testing, scraping, and form automation",
+      "version": "1.0.0",
+      "author": {
+        "name": "FinnCathersides"
+      },
+      "source": "./",
+      "skills": [
+        "./skills/playwright-cli"
+      ],
+      "category": "automation",
+      "keywords": ["playwright", "browser", "automation", "testing", "scraping", "e2e"]
     }
   ]
 }
